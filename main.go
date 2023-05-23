@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 // estructura de las peliculas
@@ -48,6 +50,15 @@ func CreateMovie(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "peliculas: %v\n", movies)
 }
 
+func DeleteMovie(w http.ResponseWriter, r *http.Request) {}
+
+func UpdateMovie(w http.ResponseWriter, r *http.Request) {}
+
+func GetMovie(w http.ResponseWriter, r *http.Request) {
+	idq := r.URL.Query().Get("id")
+	fmt.Println(idq)
+}
+
 func Index(w http.ResponseWriter, r *http.Request) {
 
 	path := r.URL.Path
@@ -70,16 +81,30 @@ func Index(w http.ResponseWriter, r *http.Request) {
 func main() {
 
 	// create server
-	fmt.Println("Listening on port 3000")
+	// fmt.Println("Listening on port 3000")
+
+	//serverMux para manejar multiples solicitudes
+	// muxServe := http.NewServeMux()
 
 	//endPoints
-	http.HandleFunc("/home", Index)
-	// http.HandleFunc("/movies", GetAllMovies)
-	http.HandleFunc("/movies", CreateMovie)
+	// muxServe.HandleFunc("/home", Index)
+	// muxServe.HandleFunc("/movies/get", GetAllMovies)
+	// muxServe.HandleFunc("/movies/get/:id", GetMovie)
+	// muxServe.HandleFunc("/movies/post", CreateMovie)
+	// muxServe.HandleFunc("/movies/delete/:id", DeleteMovie)
+	// muxServe.HandleFunc("/movies/update/:id", UpdateMovie)
 
-	err := http.ListenAndServe("127.0.0.1:3000", nil)
+	//ENRUTADOR GORILLA/MUX
+	mux := mux.NewRouter()
 
-	if err != nil {
+	mux.HandleFunc("/", Index).Methods("GET")
+	mux.HandleFunc("/movies", GetAllMovies).Methods("GET")
+	mux.HandleFunc("/movies/{id}", GetMovie).Methods("GET")
+	mux.HandleFunc("/movies", CreateMovie).Methods("POST")
+	mux.HandleFunc("/movies/{id}", DeleteMovie).Methods("DELETE")
+	mux.HandleFunc("/movies/{id}", UpdateMovie).Methods("PUT")
+
+	if err := http.ListenAndServe("127.0.0.1:3000", nil); err != nil {
 		log.Fatal(err)
 	}
 
