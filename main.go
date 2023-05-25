@@ -25,7 +25,7 @@ var movies []Movies
 
 // funciones para manejar las peticiones
 func GetAllMovies(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("content-type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
 	if r.URL.Path != "/movies" {
